@@ -137,7 +137,8 @@ function deleteCart(e) {
 
   const newMenus = menus.map((menu) => {
     if (menu.id === +id[id.length - 1]) {
-      const restoreQty = +document.getElementById(`qty-cart-${menu.id}`).innerText[1];
+      const cart = carts.find((cart) => cart.id === menu.id);
+      const restoreQty = cart.quantity;
       return {
         ...menu,
         stock: menu.stock + restoreQty,
