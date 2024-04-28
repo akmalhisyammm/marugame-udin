@@ -1,194 +1,206 @@
-let menus = [
+const menus = [
   {
-    id: 1,
+    id: 'M001',
     name: 'Siku Udin',
-    price: 60_000,
     type: 'food',
     image: 'https://marugameudon.co.id/webroot/files/MenuDetails/picture/Niku-Udon-1.jpg',
+    price: 60_000,
     stock: 10,
   },
   {
-    id: 2,
+    id: 'M002',
     name: 'Kake Udin',
-    price: 55_000,
     type: 'food',
     image: 'https://marugameudon.co.id/webroot/files/MenuDetails/picture/Kake-Udon-1.jpg',
+    price: 55_000,
     stock: 8,
   },
   {
-    id: 3,
+    id: 'M003',
     name: 'Tori Bata Udin',
-    price: 70_000,
-    type: 'food',
     image:
       'https://marugameudon.co.id/webroot/files/MenuDetails/picture/Chiken-Katsu-curry-udon-1.jpg',
+    type: 'food',
+    price: 70_000,
     stock: 15,
   },
   {
-    id: 4,
+    id: 'M004',
     name: 'Icha',
-    price: 10_000,
     type: 'beverage',
     image: 'https://marugameudon.co.id/webroot/files/MenuDetails/picture/ocha.jpg',
+    price: 10_000,
     stock: 30,
   },
   {
-    id: 5,
+    id: 'M005',
     name: 'Watermolen Juice',
-    price: 20_000,
-    type: 'beverage',
     image:
       'https://marugameudon.co.id/webroot/files/MenuDetails/picture/Image%20Web_Double%20Wall_Fresh%20Watermelon%20Juice.jpg',
+    type: 'beverage',
+    price: 20_000,
     stock: 25,
   },
   {
-    id: 6,
+    id: 'M006',
     name: 'Long Black Coffee',
-    price: 15_000,
     type: 'beverage',
     image: 'https://marugameudon.co.id/webroot/files/MenuDetails/picture/long-black-caffe-01.jpg',
+    price: 15_000,
     stock: 40,
   },
 ];
-let carts = [];
+const carts = [];
 
 function addToCart(e) {
-  const { id } = e.currentTarget;
-  const menu = menus.find((menu) => menu.id === +id);
-  const cart = carts.find((cart) => cart.id === +id);
+  const menuEl = e.currentTarget.parentElement.parentElement;
+
+  const menuId = menuEl.id;
+  const cartId = 'C' + menuId.slice(1);
+
+  const menu = menus.find((menu) => menu.id === menuId);
+  const cart = carts.find((cart) => cart.id === cartId);
 
   if (!cart) {
-    carts.push({
-      id: menu.id,
+    const newCart = {
+      id: cartId,
+      menuId: menu.id,
       name: menu.name,
-      price: menu.price,
       image: menu.image,
+      price: menu.price,
       quantity: 1,
-    });
+    };
 
-    const newCart = carts.find((cart) => cart.id === +id);
+    carts.push(newCart);
 
     let content = `
-      <div id="cart-${newCart.id}" class="flex justify-between shadow-lg gap-4 p-4">
+      <div id="${newCart.id}" class="cart flex justify-between shadow-lg rounded-lg gap-4 p-4">
         <div class="flex gap-4">
           <img src="${newCart.image}" alt="${newCart.name}" width="50">
           <div>
-            <h1>${newCart.name} <span id="qty-cart-${newCart.id}">(${newCart.quantity})</span></h1>
-            <p id="price-cart-${newCart.id}" class="font-bold">${new Intl.NumberFormat('id-ID', {
+            <h1 id="name-${newCart.id}">${newCart.name} <span id="qty-${newCart.id}">(${
+      newCart.quantity
+    })</span></h1>
+            <p id="price-${newCart.id}" class="font-bold">${new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
     }).format(newCart.price)}</p>
           </div>
         </div>
-        <div class="flex gap-2 h-fit">
-          <button id="delete-cart-${
-            newCart.id
-          }" class="delete-cart p-2 text-white bg-red-700 hover:bg-red-800 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-            </svg>
-          </button>
-        </div>
+        <button id="deleteBtn-${
+          newCart.id
+        }" class="h-fit text-white bg-red-700 hover:bg-red-800 rounded-lg p-2" onclick="${deleteCart}">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+          </svg>
+        </button>
       </div>
     `;
 
+    document.querySelector('#carts p').classList.add('hidden');
+    document.getElementById('carts').nextElementSibling.classList.remove('hidden');
     document.getElementById('carts').innerHTML += content;
   } else {
-    const newCarts = carts.map((cart) => {
-      if (cart.id === +id) {
-        return { ...cart, quantity: cart.quantity + 1, price: cart.price + menu.price };
+    carts.forEach((cart, idx) => {
+      if (cart.id === cartId) {
+        carts.splice(idx, 1, {
+          ...cart,
+          price: cart.price + menu.price,
+          quantity: cart.quantity + 1,
+        });
       }
-      return cart;
     });
 
-    carts = newCarts;
+    const updatedCart = carts.find((cart) => cart.id === cartId);
 
-    const newCart = carts.find((cart) => cart.id === +id);
-    document.getElementById(`qty-cart-${newCart.id}`).innerText = `(${newCart.quantity})`;
-    document.getElementById(`price-cart-${newCart.id}`).innerText = new Intl.NumberFormat('id-ID', {
+    document.getElementById(`qty-${updatedCart.id}`).innerText = `(${updatedCart.quantity})`;
+    document.getElementById(`price-${updatedCart.id}`).innerText = new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
-    }).format(newCart.price);
+    }).format(updatedCart.price);
   }
 
-  const newMenus = menus.map((menu) => {
-    if (menu.id === +id) {
-      return { ...menu, stock: menu.stock - 1 };
+  menus.forEach((menu, idx) => {
+    if (menu.id === menuId) {
+      menus.splice(idx, 1, { ...menu, stock: menu.stock - 1 });
     }
-    return menu;
   });
 
-  menus = newMenus;
+  const updatedMenu = menus.find((menu) => menu.id === menuId);
 
-  const newMenu = menus.find((menu) => menu.id === +id);
-  document.getElementById(`stock-menu-${newMenu.id}`).innerText = `Stock: ${newMenu.stock}`;
-  document
-    .querySelectorAll('button.delete-cart')
-    .forEach((button) => (button.onclick = deleteCart));
-
-  if (!newMenu.stock) {
-    document.getElementById(newMenu.id).disabled = true;
-    document.getElementById(newMenu.id).style.backgroundColor = 'gray';
+  if (!updatedMenu.stock) {
+    document.getElementById(`addBtn-${updatedMenu.id}`).disabled = true;
+    document.getElementById(`addBtn-${updatedMenu.id}`).style.backgroundColor = 'gray';
   }
+
+  document.getElementById(`stock-${updatedMenu.id}`).innerText = `Stock: ${updatedMenu.stock}`;
+  document.querySelectorAll('.cart button').forEach((button) => (button.onclick = deleteCart));
 }
 
 function deleteCart(e) {
-  const { id } = e.currentTarget;
+  const cartEl = e.currentTarget.parentElement;
 
-  const newMenus = menus.map((menu) => {
-    if (menu.id === +id[id.length - 1]) {
-      const cart = carts.find((cart) => cart.id === menu.id);
-      const restoreQty = cart.quantity;
-      return {
-        ...menu,
-        stock: menu.stock + restoreQty,
-      };
+  const cartId = cartEl.id;
+  const menuId = 'M' + cartId.slice(1);
+
+  const cart = carts.find((cart) => cart.id === cartId);
+
+  menus.forEach((menu, idx) => {
+    if (menu.id === menuId) {
+      menus.splice(idx, 1, { ...menu, stock: menu.stock + cart.quantity });
     }
-    return menu;
   });
-  const newCarts = carts.filter((cart) => cart.id !== +id[id.length - 1]);
+  carts.forEach((cart, idx) => {
+    if (cart.id === cartId) {
+      carts.splice(idx, 1);
+    }
+  });
 
-  menus = newMenus;
-  carts = newCarts;
+  const updatedMenu = menus.find((menu) => menu.id === menuId);
 
-  const newMenu = menus.find((menu) => menu.id === +id[id.length - 1]);
+  document.getElementById(`stock-${menuId}`).innerText = `Stock: ${updatedMenu.stock}`;
+  document.getElementById(`addBtn-${updatedMenu.id}`).disabled = false;
+  document.getElementById(`addBtn-${updatedMenu.id}`).style.backgroundColor = '';
 
-  document.getElementById(`stock-menu-${+id[id.length - 1]}`).innerText = `Stock: ${newMenu.stock}`;
+  if (!carts.length) {
+    document.querySelector('#carts p').classList.remove('hidden');
+    document.getElementById('carts').nextElementSibling.classList.add('hidden');
+  }
 
-  e.currentTarget.parentElement.parentElement.remove();
-
-  document.getElementById(newMenu.id).disabled = false;
-  document.getElementById(newMenu.id).style.backgroundColor = '';
+  cartEl.remove();
 }
 
 function render() {
   let content = '';
 
-  for (const menu of menus) {
+  menus.forEach((menu) => {
     content += `
-      <div id="menu-${menu.id}" class="shadow-lg flex flex-col justify-between gap-2 p-4">
+      <div id="${
+        menu.id
+      }" class="menu flex flex-col justify-between shadow-lg rounded-lg gap-2 p-4">
         <img src="${menu.image}" alt=${menu.name}>
         <div class="flex flex-col gap-2">
-          <h3>${menu.name}</h3>
-          <p class="font-bold">${new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-          }).format(menu.price)}</p>
-          <p id="stock-menu-${menu.id}">Stock: ${menu.stock}</p>
-          <button id="${
+          <h3 id="name-${menu.id}">${menu.name}</h3>
+          <p id="price-${menu.id}" class="font-bold">${new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+    }).format(menu.price)}</p>
+          <p id="stock-${menu.id}">Stock: ${menu.stock}</p>
+          <button id="addBtn-${
             menu.id
-          }" class="add-cart p-2 text-white bg-green-700 hover:bg-green-800 w-full rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mx-auto">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+          }" class="flex justify-center items-center text-white bg-green-700 hover:bg-green-800 w-full rounded-lg gap-1 p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+              <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
             </svg>
+            <span class="pb-px">Cart</span>
           </button>
         </div>
       </div>
     `;
-  }
+  });
 
-  document.getElementById('cards').innerHTML = content;
-  document.querySelectorAll('button.add-cart').forEach((button) => (button.onclick = addToCart));
+  document.getElementById('menus').innerHTML = content;
+  document.querySelectorAll('.menu div button').forEach((button) => (button.onclick = addToCart));
 }
 
 render();
